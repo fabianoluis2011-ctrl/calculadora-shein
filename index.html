@@ -12,12 +12,85 @@
             background: linear-gradient(135deg, #1e1e2f 0%, #000000 100%);
             min-height: 100vh;
             display: flex;
-            flex-direction: column; /* Alterado para empilhar o card e o rodapé */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 20px;
             color: #333;
         }
+
+        /* --- TELA DE BLOQUEIO (NOVO) --- */
+        #lock-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0d0d12; /* Fundo bem escuro */
+            z-index: 9999; /* Fica na frente de tudo */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+
+        .lock-box {
+            background: #1c1c24;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 350px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            border: 1px solid #333;
+        }
+
+        .lock-title {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .lock-input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            background: #2c2c35;
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            margin-bottom: 15px;
+            outline: none;
+        }
+        
+        .lock-input:focus { border-color: #27ae60; }
+
+        .btn-unlock {
+            width: 100%;
+            padding: 15px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-unlock:active { transform: scale(0.95); }
+
+        .error-msg {
+            color: #e74c3c;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            display: none; /* Escondido por padrão */
+        }
+
+        /* --- FIM TELA DE BLOQUEIO --- */
 
         /* CARTÃO PRINCIPAL */
         .card {
@@ -31,7 +104,6 @@
             position: relative;
         }
 
-        /* RODAPÉ (NOVO) */
         .footer-credit {
             margin-top: 25px;
             color: rgba(255, 255, 255, 0.5);
@@ -41,179 +113,46 @@
             font-weight: 400;
         }
 
-        /* CABEÇALHO COM ABAS */
-        .header {
-            background: #fff;
-            padding: 20px 20px 0 20px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .title {
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            margin-bottom: 15px;
-            color: #000;
-            text-transform: uppercase;
-        }
-
-        .tabs {
-            display: flex;
-            background: #f1f3f5;
-            padding: 5px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            background: transparent;
-            font-weight: 600;
-            color: #888;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-        }
-
-        .tab-btn.active {
-            background: #000;
-            color: #fff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-
-        /* CONTEÚDO */
-        .content {
-            padding: 25px;
-            display: none; /* Escondido por padrão */
-        }
-        .content.active {
-            display: block; /* Mostra a aba ativa */
-            animation: slideUp 0.3s ease-out;
-        }
-
-        /* FORMULÁRIO */
-        .form-grid {
-            display: grid;
-            gap: 15px;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: #666;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-wrapper span {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #999;
-            font-weight: 600;
-        }
-
-        input {
-            width: 100%;
-            padding: 14px 14px 14px 40px; /* Espaço para o R$ */
-            border: 2px solid #f1f3f5;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            color: #333;
-            background: #f8f9fa;
-            transition: 0.2s;
-            outline: none;
-        }
-
-        input:focus {
-            border-color: #000;
-            background: #fff;
-        }
-
-        /* BOTÃO DE AÇÃO */
-        .btn-calc {
-            width: 100%;
-            padding: 16px;
-            background: #000;
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: transform 0.1s;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-        }
-        .btn-calc:active {
-            transform: scale(0.98);
-        }
-
-        /* RESULTADOS */
-        .result-box {
-            margin-top: 25px;
-            background: #f8f9fa;
-            border-radius: 16px;
-            padding: 20px;
-            display: none;
-            border: 1px solid #eee;
-        }
-
-        .result-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            color: #555;
-        }
-
-        .divider {
-            height: 1px;
-            background: #ddd;
-            margin: 15px 0;
-        }
-
-        .final-result {
-            text-align: center;
-        }
-
-        .final-result label {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            color: #888;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        .final-value {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #27ae60;
-            margin-top: 5px;
-            line-height: 1;
-        }
-        
+        .header { background: #fff; padding: 20px 20px 0 20px; border-bottom: 1px solid #eee; }
+        .title { text-align: center; font-size: 1.2rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 15px; color: #000; text-transform: uppercase; }
+        .tabs { display: flex; background: #f1f3f5; padding: 5px; border-radius: 12px; margin-bottom: 20px; }
+        .tab-btn { flex: 1; padding: 12px; border: none; background: transparent; font-weight: 600; color: #888; cursor: pointer; border-radius: 8px; transition: all 0.3s ease; font-size: 0.9rem; }
+        .tab-btn.active { background: #000; color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .content { padding: 25px; display: none; }
+        .content.active { display: block; animation: slideUp 0.3s ease-out; }
+        .form-grid { display: grid; gap: 15px; }
+        .input-group label { display: block; font-size: 0.75rem; font-weight: 700; color: #666; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .input-wrapper { position: relative; }
+        .input-wrapper span { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #999; font-weight: 600; }
+        input { width: 100%; padding: 14px 14px 14px 40px; border: 2px solid #f1f3f5; border-radius: 12px; font-size: 1rem; font-weight: 600; color: #333; background: #f8f9fa; transition: 0.2s; outline: none; }
+        input:focus { border-color: #000; background: #fff; }
+        .btn-calc { width: 100%; padding: 16px; background: #000; color: #fff; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 20px; transition: transform 0.1s; box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        .btn-calc:active { transform: scale(0.98); }
+        .result-box { margin-top: 25px; background: #f8f9fa; border-radius: 16px; padding: 20px; display: none; border: 1px solid #eee; }
+        .result-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; color: #555; }
+        .divider { height: 1px; background: #ddd; margin: 15px 0; }
+        .final-result { text-align: center; }
+        .final-result label { font-size: 0.8rem; text-transform: uppercase; color: #888; font-weight: 700; letter-spacing: 1px; }
+        .final-value { font-size: 2rem; font-weight: 800; color: #27ae60; margin-top: 5px; line-height: 1; }
         .loss { color: #e74c3c !important; }
-
-        /* ANIMAÇÕES */
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
     </style>
 </head>
 <body>
+
+<div id="lock-screen">
+    <div class="lock-box">
+        <div class="lock-title">Acesso Restrito 🔒</div>
+        
+        <input type="password" id="senhaInput" class="lock-input" placeholder="Digite a senha" inputmode="numeric">
+        
+        <button class="btn-unlock" onclick="verificarSenha()">ENTRAR</button>
+        
+        <div id="msgErro" class="error-msg">Senha Incorreta!</div>
+    </div>
+</div>
 
 <div class="card">
     <div class="header">
@@ -233,7 +172,6 @@
                     <input type="number" id="venda1" placeholder="0,00" inputmode="decimal">
                 </div>
             </div>
-            
             <div class="input-group">
                 <label>Custo do Produto</label>
                 <div class="input-wrapper">
@@ -241,7 +179,6 @@
                     <input type="number" id="custo1" placeholder="0,00" inputmode="decimal">
                 </div>
             </div>
-
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                 <div class="input-group">
                     <label>Comissão (%)</label>
@@ -252,7 +189,6 @@
                     <input type="number" id="imposto1" value="5" style="padding-left: 15px;">
                 </div>
             </div>
-            
             <div class="input-group">
                 <label>Frete Fixo</label>
                 <div class="input-wrapper">
@@ -261,9 +197,7 @@
                 </div>
             </div>
         </div>
-
         <button class="btn-calc" onclick="calcularLucro()">CALCULAR AGORA</button>
-
         <div id="result-lucro" class="result-box">
             <div class="result-row"><span>(-) Comissão Shein</span> <b id="r1-comissao">R$ 0,00</b></div>
             <div class="result-row"><span>(-) Imposto NF</span> <b id="r1-imposto">R$ 0,00</b></div>
@@ -289,7 +223,6 @@
                     <input type="number" id="meta2" placeholder="Ex: 20,00" inputmode="decimal">
                 </div>
             </div>
-            
             <div class="input-group">
                 <label>Custo do Produto</label>
                 <div class="input-wrapper">
@@ -297,7 +230,6 @@
                     <input type="number" id="custo2" placeholder="Ex: 33,00" inputmode="decimal">
                 </div>
             </div>
-
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                 <div class="input-group">
                     <label>Comissão (%)</label>
@@ -308,7 +240,6 @@
                     <input type="number" id="imposto2" value="5" style="padding-left: 15px;">
                 </div>
             </div>
-
              <div class="input-group">
                 <label>Frete Fixo</label>
                 <div class="input-wrapper">
@@ -317,9 +248,7 @@
                 </div>
             </div>
         </div>
-
         <button class="btn-calc" onclick="calcularPrecoIdeal()">DESCOBRIR PREÇO</button>
-
         <div id="result-meta" class="result-box">
             <div class="final-result">
                 <label>Venda por este preço:</label>
@@ -336,15 +265,38 @@
 <div class="footer-credit">Desenvolvido e criado por Fabiano Souza</div>
 
 <script>
-    // SISTEMA DE ABAS
+    // --- LÓGICA DA SENHA ---
+    function verificarSenha() {
+        var senhaDigitada = document.getElementById('senhaInput').value;
+        
+        // ============================================
+        // ⚠️ MUDE SUA SENHA AQUI EMBAIXO:
+        var senhaCorreta = "1q2w3e4r"; 
+        // ============================================
+
+        if (senhaDigitada === senhaCorreta) {
+            // Some com a tela de bloqueio
+            document.getElementById('lock-screen').style.opacity = '0';
+            setTimeout(function(){
+                document.getElementById('lock-screen').style.display = 'none';
+            }, 500);
+        } else {
+            // Mostra erro
+            document.getElementById('msgErro').style.display = 'block';
+            document.getElementById('senhaInput').value = ''; // Limpa campo
+        }
+    }
+
+    // Funcionar ao apertar ENTER na senha
+    document.getElementById("senhaInput").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") { verificarSenha(); }
+    });
+
+    // --- LÓGICA DA CALCULADORA (IGUAL AO ANTERIOR) ---
     function switchTab(tabName) {
-        // Esconde todos
         document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        
-        // Mostra o selecionado
         document.getElementById('tab-' + tabName).classList.add('active');
-        // Acha o botão clicado e ativa
         event.currentTarget.classList.add('active');
     }
 
@@ -352,7 +304,6 @@
         return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
-    // CÁLCULO 1: LUCRO
     function calcularLucro() {
         let venda = parseFloat(document.getElementById('venda1').value) || 0;
         let custo = parseFloat(document.getElementById('custo1').value) || 0;
@@ -363,11 +314,9 @@
         let valComissao = venda * (comissao / 100);
         let valImposto = venda * (imposto / 100);
         let custoTotal = custo + frete;
-        
         let lucro = venda - valComissao - valImposto - custoTotal;
         let margem = (venda > 0) ? (lucro / venda) * 100 : 0;
 
-        // Preencher dados
         document.getElementById('r1-comissao').innerText = formatar(valComissao);
         document.getElementById('r1-imposto').innerText = formatar(valImposto);
         document.getElementById('r1-custos').innerText = formatar(custoTotal);
@@ -376,17 +325,11 @@
         elFinal.innerText = formatar(lucro);
         document.getElementById('r1-margem').innerText = margem.toFixed(1) + "%";
 
-        // Cor de prejuízo
-        if(lucro < 0) {
-            elFinal.classList.add('loss');
-        } else {
-            elFinal.classList.remove('loss');
-        }
-
+        if(lucro < 0) elFinal.classList.add('loss');
+        else elFinal.classList.remove('loss');
         document.getElementById('result-lucro').style.display = 'block';
     }
 
-    // CÁLCULO 2: META (PREÇO IDEAL)
     function calcularPrecoIdeal() {
         let meta = parseFloat(document.getElementById('meta2').value) || 0;
         let custo = parseFloat(document.getElementById('custo2').value) || 0;
@@ -394,20 +337,14 @@
         let imposto = parseFloat(document.getElementById('imposto2').value) || 0;
         let frete = parseFloat(document.getElementById('frete2').value) || 0;
 
-        // Fórmula: Preço = (Custo + Frete + Meta) / (1 - (Taxas/100))
         let taxas = (comissao + imposto) / 100;
         let divisor = 1 - taxas;
 
-        if(divisor <= 0) {
-            alert("Erro: As taxas somam mais de 100%.");
-            return;
-        }
+        if(divisor <= 0) { alert("Erro: As taxas somam mais de 100%."); return; }
 
         let precoIdeal = (custo + frete + meta) / divisor;
-
         document.getElementById('r2-final').innerText = formatar(precoIdeal);
         document.getElementById('r2-confirm').innerText = formatar(meta);
-        
         document.getElementById('result-meta').style.display = 'block';
     }
 </script>
