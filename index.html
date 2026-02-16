@@ -1,354 +1,633 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Calculadora Shein Pro</title>
-    <style>
-        /* RESET E ESTRUTURA BASE */
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-        
-        body {
-            background: linear-gradient(135deg, #1e1e2f 0%, #000000 100%);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            color: #333;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Calculadora Shein</title>
 
-        /* --- TELA DE BLOQUEIO (NOVO) --- */
-        #lock-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #0d0d12; /* Fundo bem escuro */
-            z-index: 9999; /* Fica na frente de tudo */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.5s ease;
-        }
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root{
+      --accent: #111111;       /* Shein mais “preto” */
+      --accent2:#2b2b2b;
 
-        .lock-box {
-            background: #1c1c24;
-            padding: 30px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 350px;
-            text-align: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            border: 1px solid #333;
-        }
+      --bg-1: #1f2430;
+      --bg-2: #05060a;
+      --bg-3: #000;
 
-        .lock-title {
-            color: white;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
+      --card-1: rgba(24,27,34,0.96);
+      --card-2: rgba(18,21,28,0.98);
 
-        .lock-input {
-            width: 100%;
-            padding: 15px;
-            border-radius: 10px;
-            border: 1px solid #333;
-            background: #2c2c35;
-            color: white;
-            font-size: 1.2rem;
-            text-align: center;
-            margin-bottom: 15px;
-            outline: none;
-        }
-        
-        .lock-input:focus { border-color: #27ae60; }
+      --text: #f5f5f5;
+      --muted: #9ca3af;
 
-        .btn-unlock {
-            width: 100%;
-            padding: 15px;
-            background: #27ae60;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-unlock:active { transform: scale(0.95); }
+      --green: #22c55e;
+      --red: #ef4444;
 
-        .error-msg {
-            color: #e74c3c;
-            margin-top: 15px;
-            font-size: 0.9rem;
-            display: none; /* Escondido por padrão */
-        }
-
-        /* --- FIM TELA DE BLOQUEIO --- */
-
-        /* CARTÃO PRINCIPAL */
-        .card {
-            background: rgba(255, 255, 255, 0.98);
-            width: 100%;
-            max-width: 450px;
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-            overflow: hidden;
-            animation: fadeIn 0.6s ease-out;
-            position: relative;
-        }
-
-        .footer-credit {
-            margin-top: 25px;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.85rem;
-            text-align: center;
-            letter-spacing: 0.5px;
-            font-weight: 400;
-        }
-
-        .header { background: #fff; padding: 20px 20px 0 20px; border-bottom: 1px solid #eee; }
-        .title { text-align: center; font-size: 1.2rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 15px; color: #000; text-transform: uppercase; }
-        .tabs { display: flex; background: #f1f3f5; padding: 5px; border-radius: 12px; margin-bottom: 20px; }
-        .tab-btn { flex: 1; padding: 12px; border: none; background: transparent; font-weight: 600; color: #888; cursor: pointer; border-radius: 8px; transition: all 0.3s ease; font-size: 0.9rem; }
-        .tab-btn.active { background: #000; color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-        .content { padding: 25px; display: none; }
-        .content.active { display: block; animation: slideUp 0.3s ease-out; }
-        .form-grid { display: grid; gap: 15px; }
-        .input-group label { display: block; font-size: 0.75rem; font-weight: 700; color: #666; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .input-wrapper { position: relative; }
-        .input-wrapper span { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #999; font-weight: 600; }
-        input { width: 100%; padding: 14px 14px 14px 40px; border: 2px solid #f1f3f5; border-radius: 12px; font-size: 1rem; font-weight: 600; color: #333; background: #f8f9fa; transition: 0.2s; outline: none; }
-        input:focus { border-color: #000; background: #fff; }
-        .btn-calc { width: 100%; padding: 16px; background: #000; color: #fff; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 20px; transition: transform 0.1s; box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
-        .btn-calc:active { transform: scale(0.98); }
-        .result-box { margin-top: 25px; background: #f8f9fa; border-radius: 16px; padding: 20px; display: none; border: 1px solid #eee; }
-        .result-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; color: #555; }
-        .divider { height: 1px; background: #ddd; margin: 15px 0; }
-        .final-result { text-align: center; }
-        .final-result label { font-size: 0.8rem; text-transform: uppercase; color: #888; font-weight: 700; letter-spacing: 1px; }
-        .final-value { font-size: 2rem; font-weight: 800; color: #27ae60; margin-top: 5px; line-height: 1; }
-        .loss { color: #e74c3c !important; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-    </style>
-</head>
-<body>
-
-<div id="lock-screen">
-    <div class="lock-box">
-        <div class="lock-title">Acesso Restrito 🔒</div>
-        
-        <input type="password" id="senhaInput" class="lock-input" placeholder="Digite a senha" inputmode="numeric">
-        
-        <button class="btn-unlock" onclick="verificarSenha()">ENTRAR</button>
-        
-        <div id="msgErro" class="error-msg">Senha Incorreta!</div>
-    </div>
-</div>
-
-<div class="card">
-    <div class="header">
-        <div class="title">📊 Calculadora Shein</div>
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('lucro')">Calcular Lucro</button>
-            <button class="tab-btn" onclick="switchTab('meta')">Definir Preço</button>
-        </div>
-    </div>
-
-    <div id="tab-lucro" class="content active">
-        <div class="form-grid">
-            <div class="input-group">
-                <label>Preço de Venda</label>
-                <div class="input-wrapper">
-                    <span>R$</span>
-                    <input type="number" id="venda1" placeholder="0,00" inputmode="decimal">
-                </div>
-            </div>
-            <div class="input-group">
-                <label>Custo do Produto</label>
-                <div class="input-wrapper">
-                    <span>R$</span>
-                    <input type="number" id="custo1" placeholder="0,00" inputmode="decimal">
-                </div>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <div class="input-group">
-                    <label>Comissão (%)</label>
-                    <input type="number" id="comissao1" value="16" style="padding-left: 15px;">
-                </div>
-                <div class="input-group">
-                    <label>Imposto (%)</label>
-                    <input type="number" id="imposto1" value="5" style="padding-left: 15px;">
-                </div>
-            </div>
-            <div class="input-group">
-                <label>Frete Fixo</label>
-                <div class="input-wrapper">
-                    <span>R$</span>
-                    <input type="number" id="frete1" value="5.00" inputmode="decimal">
-                </div>
-            </div>
-        </div>
-        <button class="btn-calc" onclick="calcularLucro()">CALCULAR AGORA</button>
-        <div id="result-lucro" class="result-box">
-            <div class="result-row"><span>(-) Comissão Shein</span> <b id="r1-comissao">R$ 0,00</b></div>
-            <div class="result-row"><span>(-) Imposto NF</span> <b id="r1-imposto">R$ 0,00</b></div>
-            <div class="result-row"><span>(-) Custo + Frete</span> <b id="r1-custos">R$ 0,00</b></div>
-            <div class="divider"></div>
-            <div class="final-result">
-                <label>Seu Lucro Líquido</label>
-                <div class="final-value" id="r1-final">R$ 0,00</div>
-                <div style="font-size: 0.8rem; margin-top: 5px; color: #666;">Margem: <span id="r1-margem">0%</span></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="tab-meta" class="content">
-        <div style="text-align: center; margin-bottom: 20px; font-size: 0.9rem; color: #666;">
-            Quanto você quer colocar no bolso, limpo?
-        </div>
-        <div class="form-grid">
-            <div class="input-group">
-                <label>Meta de Lucro</label>
-                <div class="input-wrapper">
-                    <span>R$</span>
-                    <input type="number" id="meta2" placeholder="Ex: 20,00" inputmode="decimal">
-                </div>
-            </div>
-            <div class="input-group">
-                <label>Custo do Produto</label>
-                <div class="input-wrapper">
-                    <span>R$</span>
-                    <input type="number" id="custo2" placeholder="Ex: 33,00" inputmode="decimal">
-                </div>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <div class="input-group">
-                    <label>Comissão (%)</label>
-                    <input type="number" id="comissao2" value="16" style="padding-left: 15px;">
-                </div>
-                <div class="input-group">
-                    <label>Imposto (%)</label>
-                    <input type="number" id="imposto2" value="5" style="padding-left: 15px;">
-                </div>
-            </div>
-             <div class="input-group">
-                <label>Frete Fixo</label>
-                <div class="input-wrapper">
-                    <span>R$</span>
-                    <input type="number" id="frete2" value="5.00" inputmode="decimal">
-                </div>
-            </div>
-        </div>
-        <button class="btn-calc" onclick="calcularPrecoIdeal()">DESCOBRIR PREÇO</button>
-        <div id="result-meta" class="result-box">
-            <div class="final-result">
-                <label>Venda por este preço:</label>
-                <div class="final-value" id="r2-final" style="color: #2980b9;">R$ 0,00</div>
-            </div>
-            <div class="divider"></div>
-            <div style="text-align: center; font-size: 0.85rem; color: #555;">
-                Vendendo a este valor, você paga todas as taxas e sobram exatos <b id="r2-confirm">R$ 0,00</b>.
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="footer-credit">Desenvolvido e criado por Fabiano Souza</div>
-
-<script>
-    // --- LÓGICA DA SENHA ---
-    function verificarSenha() {
-        var senhaDigitada = document.getElementById('senhaInput').value;
-        
-        // ============================================
-        // ⚠️ MUDE SUA SENHA AQUI EMBAIXO:
-        var senhaCorreta = "99662444"; 
-        // ============================================
-
-        if (senhaDigitada === senhaCorreta) {
-            // Some com a tela de bloqueio
-            document.getElementById('lock-screen').style.opacity = '0';
-            setTimeout(function(){
-                document.getElementById('lock-screen').style.display = 'none';
-            }, 500);
-        } else {
-            // Mostra erro
-            document.getElementById('msgErro').style.display = 'block';
-            document.getElementById('senhaInput').value = ''; // Limpa campo
-        }
+      --radius: 18px;
+      --pad: 18px;
+      --gap: 16px;
+      --max-w: 1080px;
     }
 
-    // Funcionar ao apertar ENTER na senha
-    document.getElementById("senhaInput").addEventListener("keypress", function(event) {
-        if (event.key === "Enter") { verificarSenha(); }
+    html, body { height: 100%; }
+    body{
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top, var(--bg-1) 0, var(--bg-2) 55%, var(--bg-3) 100%);
+      overflow: hidden;
+    }
+    body.locked{
+      background: radial-gradient(circle at center, #1a1f2e 0%, #0f1115 70%, #000 100%);
+    }
+
+    /* Palco central */
+    .stage{
+      height: 100vh;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+    }
+
+    .wrap{
+      width: min(var(--max-w), 100%);
+      height: min(720px, calc(100vh - 44px));
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+
+      opacity: 0;
+      transform: translateY(14px);
+      transition: all 0.35s ease-out;
+    }
+    .wrap.unlocked{ opacity: 1; transform: translateY(0); }
+
+    header{
+      text-align: center;
+      padding: 6px 0 2px;
+      flex: 0 0 auto;
+    }
+    header h1{
+      font-size: 1.9rem;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      color: #e5e7eb;
+      text-shadow: 0 0 18px rgba(255,255,255,0.10);
+    }
+    header p{
+      margin-top: 6px;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .grid{
+      flex: 1 1 auto;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--gap);
+    }
+
+    .card{
+      background: linear-gradient(135deg, var(--card-1), var(--card-2));
+      border-radius: var(--radius);
+      padding: var(--pad);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.65);
+      border: 1px solid rgba(255,255,255,0.04);
+      min-height: 0;
+      overflow: auto;
+    }
+
+    .card h2{
+      font-size: 1.05rem;
+      margin-bottom: 12px;
+      font-weight: 900;
+      color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    /* Toggle modo */
+    .modo-toggle{
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 3px;
+      background: rgba(15,23,42,0.8);
+      border: 1px solid rgba(148,163,184,0.35);
+      margin-bottom: 16px;
+      width: 100%;
+    }
+    .modo-btn{
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      flex: 1;
+      font-weight: 900;
+    }
+    .modo-btn.active{
+      background: linear-gradient(135deg, #ffffff, #cbd5e1);
+      color: #111827;
+      box-shadow: 0 0 14px rgba(255,255,255,0.18);
+    }
+
+    /* Form */
+    .form-grid{ display: grid; gap: 12px; margin-top: 8px; }
+    label{
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 800;
+      margin-bottom: 6px;
+      display: block;
+    }
+    input{
+      width: 100%;
+      background: linear-gradient(135deg, #020617, #0b1220);
+      border-radius: 10px;
+      border: 1px solid rgba(148,163,184,0.45);
+      padding: 10px 12px;
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.15s ease;
+    }
+    input:focus{
+      border-color: #e5e7eb;
+      box-shadow: 0 0 0 2px rgba(229,231,235,0.20);
+    }
+    .row-grid{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .hint{
+      font-size: 0.72rem;
+      color: #6b7280;
+      margin-top: 6px;
+    }
+
+    /* Botão */
+    .btn-calc{
+      width: 100%;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border: 0;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 900;
+      color: #111827;
+      background: linear-gradient(135deg, #ffffff, #cbd5e1);
+      box-shadow: 0 10px 28px rgba(255,255,255,0.12);
+      transition: transform 0.08s ease;
+    }
+    .btn-calc:active{ transform: scale(0.98); }
+
+    /* Resultado principal */
+    .resultado-principal{
+      margin-top: 8px;
+      padding: 16px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(15,23,42,0.95));
+      border: 1px solid rgba(255,255,255,0.18);
+      text-align: left;
+    }
+    .resultado-principal .label{
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 800;
+    }
+    .resultado-principal .value{
+      font-size: 2rem;
+      font-weight: 1000;
+      margin-top: 6px;
+      color: #e5e7eb;
+      text-shadow: 0 0 14px rgba(255,255,255,0.10);
+    }
+    .value.loss{ color: #fca5a5; }
+
+    .resumo{
+      margin-top: 12px;
+      background: radial-gradient(circle at top left, rgba(255,255,255,0.10), transparent 60%);
+      border-radius: 12px;
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,0.10);
+    }
+    .resumo-title{
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+      text-align: center;
+      font-weight: 1000;
+    }
+    .resumo-grid{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 12px;
+      font-size: 0.85rem;
+    }
+    .resumo-item{
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      white-space: nowrap;
+    }
+    .resumo-label{ color: var(--muted); font-weight: 800; }
+    .resumo-value.green{ color: var(--green); font-weight: 1000; }
+    .resumo-value.red{ color: #fca5a5; font-weight: 900; }
+
+    footer{
+      flex: 0 0 auto;
+      text-align: center;
+      padding: 10px 0 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    footer span.author{ color: #e5e7eb; font-weight: 900; }
+
+    /* LOGIN */
+    .login-screen{
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(15,17,21,0.98), rgba(5,6,10,0.99));
+      backdrop-filter: blur(20px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      animation: fadeIn 0.35s ease-out;
+    }
+    @keyframes fadeIn{
+      from { opacity: 0; transform: scale(0.96); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    .login-card{
+      background: linear-gradient(145deg, rgba(24,27,34,0.95), rgba(18,21,28,0.98));
+      border-radius: 24px;
+      padding: 40px 32px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.75);
+      border: 1px solid rgba(255,255,255,0.10);
+      text-align: center;
+      max-width: 380px;
+      width: 92%;
+      backdrop-filter: blur(10px);
+    }
+    .login-logo{
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #ffffff, #cbd5e1);
+      border-radius: 20px;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 1000;
+      color: #111827;
+      box-shadow: 0 0 30px rgba(255,255,255,0.18);
+    }
+    .login-title{
+      color: #e5e7eb;
+      font-size: 1.35rem;
+      margin-bottom: 8px;
+      font-weight: 1000;
+    }
+    .login-subtitle{
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 22px;
+      font-weight: 700;
+    }
+    .login-input{
+      width: 100%;
+      background: linear-gradient(135deg, #020617, #0b1220);
+      border-radius: 14px;
+      border: 2px solid rgba(255,255,255,0.16);
+      padding: 14px 18px;
+      color: var(--text);
+      font-size: 1.1rem;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-align: center;
+      outline: none;
+      transition: all 0.20s ease;
+      margin-bottom: 14px;
+    }
+    .login-input:focus{
+      border-color: rgba(255,255,255,0.40);
+      box-shadow: 0 0 0 4px rgba(255,255,255,0.10);
+      transform: translateY(-1px);
+    }
+    .login-btn{
+      width: 100%;
+      background: linear-gradient(135deg, #ffffff, #cbd5e1);
+      color: #111827;
+      border: none;
+      border-radius: 14px;
+      padding: 14px 24px;
+      font-size: 1rem;
+      font-weight: 1000;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      box-shadow: 0 10px 30px rgba(255,255,255,0.12);
+    }
+    .login-btn:disabled{ opacity: 0.7; cursor: not-allowed; }
+    .login-error{
+      background: rgba(239,68,68,0.15);
+      border: 1px solid rgba(239,68,68,0.4);
+      color: #fca5a5;
+      padding: 12px;
+      border-radius: 12px;
+      margin-top: 12px;
+      font-size: 0.85rem;
+      display: none;
+      font-weight: 900;
+    }
+
+    @media (max-width: 900px){
+      body{ overflow: auto; }
+      .stage{ align-items: flex-start; padding: 16px; }
+      .wrap{ height: auto; }
+      .grid{ grid-template-columns: 1fr; }
+      .card{ overflow: visible; }
+    }
+    @media (max-width: 480px){
+      .row-grid{ grid-template-columns: 1fr; }
+      header h1{ font-size: 1.55rem; }
+    }
+  </style>
+</head>
+
+<body class="locked">
+
+  <!-- LOGIN (sempre pede ao recarregar, sem localStorage) -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <div class="login-logo">S</div>
+      <h2 class="login-title">Calculadora Shein</h2>
+      <p class="login-subtitle">Digite a senha para ter acesso ao conteúdo</p>
+      <input type="password" class="login-input" id="senhaInput" placeholder="Senha de 8 dígitos" maxlength="8" inputmode="numeric" />
+      <button class="login-btn" id="loginBtn" disabled>Entrar</button>
+      <div class="login-error" id="loginError">Senha incorreta. Tente novamente.</div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="wrap" id="appContent">
+      <header>
+        <h1>Calculadora Shein</h1>
+        <p>Precificação completa · Comissão + Impostos + Frete</p>
+      </header>
+
+      <div class="grid">
+        <!-- ENTRADAS -->
+        <section class="card">
+          <h2>Entradas</h2>
+
+          <div class="modo-toggle">
+            <button id="btnModoLucro" class="modo-btn active">Calcular Lucro</button>
+            <button id="btnModoPreco" class="modo-btn">Definir Preço</button>
+          </div>
+
+          <div class="form-grid">
+            <div id="grupoVenda" style="display:block;">
+              <label>Preço de venda (R$)</label>
+              <input type="number" id="precoVenda" placeholder="0,00" inputmode="decimal" />
+            </div>
+
+            <div id="grupoMeta" style="display:none;">
+              <label>Meta de lucro (R$)</label>
+              <input type="number" id="metaLucro" placeholder="Ex: 20,00" inputmode="decimal" />
+            </div>
+
+            <div>
+              <label>Custo do produto (R$)</label>
+              <input type="number" id="custoProduto" placeholder="0,00" inputmode="decimal" />
+            </div>
+
+            <div class="row-grid">
+              <div>
+                <label>Comissão (%)</label>
+                <input type="number" id="comissao" value="16" step="0.1" />
+              </div>
+              <div>
+                <label>Imposto (%)</label>
+                <input type="number" id="imposto" value="5" step="0.1" />
+              </div>
+            </div>
+
+            <div>
+              <label>Frete fixo (R$)</label>
+              <input type="number" id="freteFixo" value="5.00" step="0.01" inputmode="decimal" />
+              <div class="hint">Frete fixo será somado ao custo.</div>
+            </div>
+
+            <button class="btn-calc" id="btnCalcular">CALCULAR</button>
+          </div>
+        </section>
+
+        <!-- RESULTADOS -->
+        <section class="card">
+          <h2>Resultado</h2>
+
+          <div class="resultado-principal">
+            <div class="label" id="labelPrincipal">Seu lucro líquido:</div>
+            <div class="value" id="valorPrincipal">R$ 0,00</div>
+          </div>
+
+          <div class="resumo">
+            <div class="resumo-title">Resumo completo</div>
+            <div class="resumo-grid">
+              <div class="resumo-item"><span class="resumo-label">Preço venda</span><span id="rPreco">R$ 0,00</span></div>
+              <div class="resumo-item"><span class="resumo-label">Comissão</span><span class="resumo-value red" id="rComissao">R$ 0,00</span></div>
+
+              <div class="resumo-item"><span class="resumo-label">Imposto</span><span class="resumo-value red" id="rImposto">R$ 0,00</span></div>
+              <div class="resumo-item"><span class="resumo-label">Frete</span><span class="resumo-value red" id="rFrete">R$ 0,00</span></div>
+
+              <div class="resumo-item"><span class="resumo-label">Custo prod.</span><span class="resumo-value red" id="rCusto">R$ 0,00</span></div>
+              <div class="resumo-item"><span class="resumo-label">Margem</span><span class="resumo-value green" id="rMargem">0%</span></div>
+
+              <div class="resumo-item"><span class="resumo-label">Lucro líquido</span><span class="resumo-value green" id="rLucro">R$ 0,00</span></div>
+              <div class="resumo-item"><span class="resumo-label">Meta lucro</span><span id="rMeta">—</span></div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <footer>
+        Desenvolvido e criado por <span class="author">Fabiano Souza</span>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    // ===== LOGIN (sempre exige senha ao recarregar) =====
+    const SENHA_CORRETA = "99662444";
+    const loginScreen = document.getElementById('loginScreen');
+    const appContent = document.getElementById('appContent');
+    const senhaInput = document.getElementById('senhaInput');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginError = document.getElementById('loginError');
+    const body = document.body;
+
+    senhaInput.addEventListener('input', function(){
+      const valor = this.value || '';
+      loginBtn.disabled = valor.length < 8;
     });
 
-    // --- LÓGICA DA CALCULADORA (IGUAL AO ANTERIOR) ---
-    function switchTab(tabName) {
-        document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById('tab-' + tabName).classList.add('active');
-        event.currentTarget.classList.add('active');
+    function mostrarErro(){
+      loginError.style.display = 'block';
+      setTimeout(() => loginError.style.display = 'none', 2000);
+      senhaInput.value = '';
+      loginBtn.disabled = true;
     }
 
-    function formatar(valor) {
-        return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    function liberarAcesso(){
+      loginScreen.style.opacity = '0';
+      loginScreen.style.transform = 'scale(0.96)';
+      loginScreen.style.pointerEvents = 'none';
+      body.classList.remove('locked');
+      appContent.classList.add('unlocked');
+      setTimeout(() => loginScreen.style.display = 'none', 350);
+      setTimeout(setup, 200);
     }
 
-    function calcularLucro() {
-        let venda = parseFloat(document.getElementById('venda1').value) || 0;
-        let custo = parseFloat(document.getElementById('custo1').value) || 0;
-        let comissao = parseFloat(document.getElementById('comissao1').value) || 0;
-        let imposto = parseFloat(document.getElementById('imposto1').value) || 0;
-        let frete = parseFloat(document.getElementById('frete1').value) || 0;
+    loginBtn.addEventListener('click', () => {
+      if (senhaInput.value === SENHA_CORRETA) liberarAcesso();
+      else mostrarErro();
+    });
 
-        let valComissao = venda * (comissao / 100);
-        let valImposto = venda * (imposto / 100);
-        let custoTotal = custo + frete;
-        let lucro = venda - valComissao - valImposto - custoTotal;
-        let margem = (venda > 0) ? (lucro / venda) * 100 : 0;
+    senhaInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && senhaInput.value.length === 8){
+        if (senhaInput.value === SENHA_CORRETA) liberarAcesso();
+        else mostrarErro();
+      }
+    });
 
-        document.getElementById('r1-comissao').innerText = formatar(valComissao);
-        document.getElementById('r1-imposto').innerText = formatar(valImposto);
-        document.getElementById('r1-custos').innerText = formatar(custoTotal);
-        
-        let elFinal = document.getElementById('r1-final');
-        elFinal.innerText = formatar(lucro);
-        document.getElementById('r1-margem').innerText = margem.toFixed(1) + "%";
+    // ===== CALCULADORA =====
+    function setup(){
+      let modo = 'lucro'; // lucro | preco
 
-        if(lucro < 0) elFinal.classList.add('loss');
-        else elFinal.classList.remove('loss');
-        document.getElementById('result-lucro').style.display = 'block';
+      const el = id => document.getElementById(id);
+      const btnModoLucro = el('btnModoLucro');
+      const btnModoPreco = el('btnModoPreco');
+
+      function formatMoney(v){
+        if (!isFinite(v) || isNaN(v)) v = 0;
+        return v.toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
+      }
+
+      function trocarModo(novo){
+        modo = novo;
+
+        if (modo === 'lucro'){
+          btnModoLucro.classList.add('active');
+          btnModoPreco.classList.remove('active');
+          el('grupoVenda').style.display = 'block';
+          el('grupoMeta').style.display = 'none';
+          el('btnCalcular').textContent = 'CALCULAR LUCRO';
+          el('labelPrincipal').textContent = 'Seu lucro líquido:';
+          el('rMeta').textContent = '—';
+        } else {
+          btnModoLucro.classList.remove('active');
+          btnModoPreco.classList.add('active');
+          el('grupoVenda').style.display = 'none';
+          el('grupoMeta').style.display = 'block';
+          el('btnCalcular').textContent = 'DESCOBRIR PREÇO';
+          el('labelPrincipal').textContent = 'Preço ideal de venda:';
+        }
+
+        calcular();
+      }
+
+      function calcular(){
+        const custo = parseFloat(el('custoProduto').value) || 0;
+        const frete = parseFloat(el('freteFixo').value) || 0;
+        const comissaoP = (parseFloat(el('comissao').value) || 0) / 100;
+        const impostoP  = (parseFloat(el('imposto').value) || 0) / 100;
+
+        const custosFixos = custo + frete;
+
+        let precoVenda = 0;
+        let lucro = 0;
+        let meta = parseFloat(el('metaLucro').value) || 0;
+
+        if (modo === 'lucro'){
+          precoVenda = parseFloat(el('precoVenda').value) || 0;
+          const valComissao = precoVenda * comissaoP;
+          const valImposto = precoVenda * impostoP;
+
+          lucro = precoVenda - (valComissao + valImposto + custosFixos);
+
+          el('valorPrincipal').textContent = formatMoney(lucro);
+          el('valorPrincipal').classList.toggle('loss', lucro < 0);
+
+          // resumo
+          el('rPreco').textContent = formatMoney(precoVenda);
+          el('rComissao').textContent = formatMoney(valComissao);
+          el('rImposto').textContent = formatMoney(valImposto);
+          el('rFrete').textContent = formatMoney(frete);
+          el('rCusto').textContent = formatMoney(custo);
+          el('rLucro').textContent = formatMoney(lucro);
+          const margem = (precoVenda > 0) ? (lucro / precoVenda) * 100 : 0;
+          el('rMargem').textContent = margem.toFixed(1) + '%';
+          el('rMeta').textContent = '—';
+
+        } else {
+          // achar preço ideal para bater meta
+          const taxas = comissaoP + impostoP;
+          const divisor = 1 - taxas;
+
+          if (divisor <= 0){
+            el('valorPrincipal').textContent = 'R$ 0,00';
+            el('valorPrincipal').classList.add('loss');
+            alert('Erro: Comissão + imposto somam 100% ou mais.');
+            return;
+          }
+
+          precoVenda = (custosFixos + meta) / divisor;
+
+          const valComissao = precoVenda * comissaoP;
+          const valImposto = precoVenda * impostoP;
+          lucro = meta;
+
+          el('valorPrincipal').textContent = formatMoney(precoVenda);
+          el('valorPrincipal').classList.remove('loss');
+
+          // resumo
+          el('rPreco').textContent = formatMoney(precoVenda);
+          el('rComissao').textContent = formatMoney(valComissao);
+          el('rImposto').textContent = formatMoney(valImposto);
+          el('rFrete').textContent = formatMoney(frete);
+          el('rCusto').textContent = formatMoney(custo);
+          el('rLucro').textContent = formatMoney(lucro);
+          const margem = (precoVenda > 0) ? (lucro / precoVenda) * 100 : 0;
+          el('rMargem').textContent = margem.toFixed(1) + '%';
+          el('rMeta').textContent = formatMoney(meta);
+        }
+      }
+
+      // eventos
+      ['precoVenda','metaLucro','custoProduto','freteFixo','comissao','imposto'].forEach(id => {
+        const node = el(id);
+        if (!node) return;
+        node.addEventListener('input', calcular);
+        node.addEventListener('change', calcular);
+      });
+
+      el('btnCalcular').addEventListener('click', calcular);
+      btnModoLucro.addEventListener('click', () => trocarModo('lucro'));
+      btnModoPreco.addEventListener('click', () => trocarModo('preco'));
+
+      calcular();
     }
-
-    function calcularPrecoIdeal() {
-        let meta = parseFloat(document.getElementById('meta2').value) || 0;
-        let custo = parseFloat(document.getElementById('custo2').value) || 0;
-        let comissao = parseFloat(document.getElementById('comissao2').value) || 0;
-        let imposto = parseFloat(document.getElementById('imposto2').value) || 0;
-        let frete = parseFloat(document.getElementById('frete2').value) || 0;
-
-        let taxas = (comissao + imposto) / 100;
-        let divisor = 1 - taxas;
-
-        if(divisor <= 0) { alert("Erro: As taxas somam mais de 100%."); return; }
-
-        let precoIdeal = (custo + frete + meta) / divisor;
-        document.getElementById('r2-final').innerText = formatar(precoIdeal);
-        document.getElementById('r2-confirm').innerText = formatar(meta);
-        document.getElementById('result-meta').style.display = 'block';
-    }
-</script>
-
+  </script>
 </body>
 </html>
-
